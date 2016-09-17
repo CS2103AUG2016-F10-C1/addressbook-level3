@@ -5,17 +5,17 @@ import seedu.addressbook.data.person.ReadOnlyPerson;
 import java.util.*;
 
 /**
- * Finds and lists all persons in address book whose name contains any of the argument keywords.
- * Keyword matching is case sensitive.
+ * Finds and lists all persons in address book whose name contains any of the
+ * argument keywords. Keyword matching is case sensitive.
  */
 public class FindCommand extends Command {
 
     public static final String COMMAND_WORD = "find";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all persons whose names contain any of "
-            + "the specified keywords (case-insensitive) and displays them as a list with index numbers.\n"
-            + "Parameters: KEYWORD [MORE_KEYWORDS]...\n"
-            + "Example: " + COMMAND_WORD + " alice bob charlie";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all persons whose contact details "
+            + "contain any of the specified keywords (case-insensitive) and displays them as a list with "
+            + "index numbers.\n" + "Parameters: KEYWORD [MORE_KEYWORDS]...\n" + "Example: " + COMMAND_WORD 
+            + " alice bob 96342343 john@gmail.com blk 253 Clementi Ave 6 #12-21";
 
     private final Set<String> keywords;
 
@@ -32,27 +32,53 @@ public class FindCommand extends Command {
 
     @Override
     public CommandResult execute() {
-        final List<ReadOnlyPerson> personsFound = getPersonsWithNameContainingAnyKeyword(keywords);
+        final List<ReadOnlyPerson> personsFound = getPersonsWithDataContainingAnyKeyword(keywords);
         return new CommandResult(getMessageForPersonListShownSummary(personsFound), personsFound);
     }
 
     /**
-     * Retrieve all persons in the address book whose names contain some of the specified keywords.
+     * Retrieve all persons in the address book whose names contain some of the
+     * specified keywords.
      *
-     * @param keywords for searching
+     * @param keywords
+     *            for searching
      * @return list of persons found
      */
-    private List<ReadOnlyPerson> getPersonsWithNameContainingAnyKeyword(Set<String> keywords) {
+    private List<ReadOnlyPerson> getPersonsWithDataContainingAnyKeyword(Set<String> keywords) {
         final List<ReadOnlyPerson> matchedPersons = new ArrayList<>();
         for (ReadOnlyPerson person : addressBook.getAllPersons()) {
-            final Set<String> wordsInName = new HashSet<>(person.getName().getWordsInName());
-            if (!Collections.disjoint(changeToUpperCase(wordsInName), changeToUpperCase(keywords))) {
+            Set<String> dataInPerson = fillPersonDataSet(person);
+            if (!Collections.disjoint(changeToUpperCase(dataInPerson), changeToUpperCase(keywords))) {
                 matchedPersons.add(person);
             }
         }
         return matchedPersons;
     }
-    
+
+    /**
+     * Consolidate all the non-private data of a person into a set
+     * 
+     * @param person
+     * @return set of a person's data
+     */
+    private Set<String> fillPersonDataSet(ReadOnlyPerson person) {
+        Set<String> dataInPerson = new HashSet<>(person.getName().getWordsInName());
+
+        if (!person.getPhone().isPrivate()) {
+            dataInPerson.add(person.getPhone().toString());
+        }
+
+        if (!person.getEmail().isPrivate()) {
+            dataInPerson.add(person.getEmail().toString());
+        }
+
+        if (!person.getAddress().isPrivate()) {
+            dataInPerson.addAll(person.getAddress().getWordsInAddress());
+        }
+
+        return dataInPerson;
+    }
+
     /**
      * Changes all words in wordsInName and keywords to Upper Case
      * 
@@ -61,9 +87,9 @@ public class FindCommand extends Command {
      */
     private Set<String> changeToUpperCase(Set<String> setToChange) {
         Set<String> caseInsensitiveSet = new HashSet<String>();
-        for (String word: setToChange) {
+        for (String word : setToChange) {
             caseInsensitiveSet.add(word.toUpperCase());
-        }       
+        }
         return caseInsensitiveSet;
     }
 

@@ -1,5 +1,8 @@
 package seedu.addressbook.data.person;
 
+import java.util.Arrays;
+import java.util.List;
+
 import seedu.addressbook.data.exception.IllegalValueException;
 
 /**
@@ -33,6 +36,14 @@ public class Address {
      */
     public static boolean isValidAddress(String test) {
         return test.matches(ADDRESS_VALIDATION_REGEX);
+    }
+    
+    /**
+     * 
+     * @return String of words in person's address
+     */
+    public List<String> getWordsInAddress() {
+        return Arrays.asList(toString().split("\\s+"));
     }
 
     @Override
