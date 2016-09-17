@@ -49,6 +49,10 @@ Examples:
   Returns `John Doe` but not `john`
 * `find Betsy Tim John`<br>
   Returns Any person having names `Betsy`, `Tim`, or `John`
+  
+## Sorting all persons: `sort`
+Sorts the list of all persons in the address book alphabetically.<br>
+Format: `sort`   
 
 ## Deleting a person : `delete`
 Deletes the specified person from the address book. Irreversible.<br>
