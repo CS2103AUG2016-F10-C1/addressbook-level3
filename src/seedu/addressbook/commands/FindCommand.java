@@ -13,7 +13,7 @@ public class FindCommand extends Command {
     public static final String COMMAND_WORD = "find";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all persons whose names contain any of "
-            + "the specified keywords (case-sensitive) and displays them as a list with index numbers.\n"
+            + "the specified keywords (case-insensitive) and displays them as a list with index numbers.\n"
             + "Parameters: KEYWORD [MORE_KEYWORDS]...\n"
             + "Example: " + COMMAND_WORD + " alice bob charlie";
 
@@ -46,11 +46,25 @@ public class FindCommand extends Command {
         final List<ReadOnlyPerson> matchedPersons = new ArrayList<>();
         for (ReadOnlyPerson person : addressBook.getAllPersons()) {
             final Set<String> wordsInName = new HashSet<>(person.getName().getWordsInName());
-            if (!Collections.disjoint(wordsInName, keywords)) {
+            if (!Collections.disjoint(changeToUpperCase(wordsInName), changeToUpperCase(keywords))) {
                 matchedPersons.add(person);
             }
         }
         return matchedPersons;
+    }
+    
+    /**
+     * Changes all words in wordsInName and keywords to Upper Case
+     * 
+     * @param setToChange
+     * @return new set of words that are in upper case
+     */
+    private Set<String> changeToUpperCase(Set<String> setToChange) {
+        Set<String> caseInsensitiveSet = new HashSet<String>();
+        for (String word: setToChange) {
+            caseInsensitiveSet.add(word.toUpperCase());
+        }       
+        return caseInsensitiveSet;
     }
 
 }
