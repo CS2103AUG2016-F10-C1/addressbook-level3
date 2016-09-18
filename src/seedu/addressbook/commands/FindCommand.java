@@ -1,6 +1,7 @@
 package seedu.addressbook.commands;
 
 import seedu.addressbook.data.person.ReadOnlyPerson;
+import seedu.addressbook.data.tag.Tag;
 
 import java.util.*;
 
@@ -60,19 +61,34 @@ public class FindCommand extends Command {
      * @return set of a person's data
      */
     private Set<String> fillPersonDataSet(ReadOnlyPerson person) {
-        Set<String> dataInPerson = new HashSet<>(person.getName().getWordsInName());
-
+        
+        
+        final StringBuilder builder = new StringBuilder();
+        builder.append(person.getName())
+                .append(" ");
         if (!person.getPhone().isPrivate()) {
-            dataInPerson.add(person.getPhone().toString());
+            builder.append(person.getPhone())
+                .append(" ");
         }
 
         if (!person.getEmail().isPrivate()) {
-            dataInPerson.add(person.getEmail().toString());
+            builder.append(person.getEmail())
+                .append(" ");
+        }
+        
+        if (!person.getAddress().isPrivate()) {
+            builder.append(person.getAddress())
+                .append(" ");
         }
 
-        if (!person.getAddress().isPrivate()) {
-            dataInPerson.addAll(person.getAddress().getWordsInAddress());
+        for (Tag tag : person.getTags()) {
+            builder.append(tag)
+                .append(" ");
         }
+      
+        
+        Set<String> dataInPerson = new HashSet<>(Arrays.asList(builder.toString().split("\\s+")));
+
 
         return dataInPerson;
     }
