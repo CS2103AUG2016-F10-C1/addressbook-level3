@@ -5,6 +5,10 @@ import seedu.addressbook.common.Prefixes;
 import seedu.addressbook.data.exception.DuplicateDataException;
 import seedu.addressbook.data.exception.IllegalValueException;
 
+import seedu.addressbook.data.tag.Tag;
+import seedu.addressbook.data.tag.UniqueTagList;
+import seedu.addressbook.data.tag.UniqueTagList.TagNotFoundException;
+
 import static seedu.addressbook.ui.Gui.DISPLAYED_INDEX_OFFSET;
 
 import java.util.*;
@@ -100,17 +104,21 @@ public class UniquePersonList implements Iterable<Person> {
     /**
      * Edits the equivalent person from the list.
      * 
-     * @throws PersonNotFoundException if no such person could be found in the list.
+     * @throws PersonNotFoundException if no such Person could be found.
+     * @throws IllegalValueException if argument(s) in argsToEdit is/are invalid.
+     * @throws TagNotFoundException  if tag to remove in argsToEdit is not found.
      */
-    public ReadOnlyPerson edit(ReadOnlyPerson toEdit, String[] argsToEdit) throws PersonNotFoundException, IllegalValueException {
+    public ReadOnlyPerson edit(ReadOnlyPerson toEdit, String[] argsToEdit) throws PersonNotFoundException, 
+    IllegalValueException, TagNotFoundException {
         if (!contains(toEdit)) {
             throw new PersonNotFoundException();
         }
         Person personToEdit = new Person(toEdit);
         for (int i = 1; i < argsToEdit.length; i++) {
             String inputData = argsToEdit[i];
-            String dataPrefix = inputData.substring(0, Prefixes.LENGTH);
-            String data = inputData.substring(Prefixes.LENGTH);
+            int backslashIndex = inputData.indexOf('/') + 1;
+            String dataPrefix = inputData.substring(0, backslashIndex);
+            String data = inputData.substring(backslashIndex);
             switch (dataPrefix) {
             case Prefixes.NAME:
                 Name editedName = new Name(data);
@@ -127,6 +135,18 @@ public class UniquePersonList implements Iterable<Person> {
             case Prefixes.ADDRESS:
                 Address editedAddress = new Address(data, personToEdit.getAddress().isPrivate());
                 personToEdit.setAddress(editedAddress);
+                break;
+            case Prefixes.ADDTAG:
+                Tag toAdd = new Tag(data);
+                UniqueTagList replacement = personToEdit.getTags();
+                replacement.add(toAdd);
+                personToEdit.setTags(replacement);
+                break;
+            case Prefixes.REMOVETAG:
+                Tag toRemove = new Tag(data);
+                UniqueTagList modified = personToEdit.getTags();
+                modified.remove(toRemove);
+                personToEdit.setTags(modified);
                 break;
             }
         }
