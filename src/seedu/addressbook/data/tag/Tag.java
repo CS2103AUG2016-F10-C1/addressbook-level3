@@ -25,6 +25,15 @@ public class Tag implements ReadOnlyTag {
         }
         this.tagName = name;
     }
+    
+    /**
+     * Copy constructor.
+     * 
+     * @throws IllegalValueException
+     */
+    public Tag(ReadOnlyTag source) throws IllegalValueException {
+        this(source.getAsText());
+    }
 
     /**
      * Returns true if a given string is a valid tag name.
