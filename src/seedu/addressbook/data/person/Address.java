@@ -37,14 +37,6 @@ public class Address {
     public static boolean isValidAddress(String test) {
         return test.matches(ADDRESS_VALIDATION_REGEX);
     }
-    
-    /**
-     * 
-     * @return String of words in person's address
-     */
-    public List<String> getWordsInAddress() {
-        return Arrays.asList(toString().split("\\s+"));
-    }
 
     @Override
     public String toString() {
