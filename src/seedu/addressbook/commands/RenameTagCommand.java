@@ -16,7 +16,7 @@ public class RenameTagCommand extends Command {
             + "Rename the tag identified by the index number used in the last tag listing.\n\t"
             + "Parameters: INDEX NEW_TAG_NAME\n\t" + "Example: " + COMMAND_WORD + " 1 family";
 
-    public static final String MESSAGE_RENAME_TAG_SUCCESS = "Renamed Tag: %1$s";
+    public static final String MESSAGE_RENAME_TAG_SUCCESS = "%1$s renamed to [%2$s]";
 
     private String newTagName;
 
@@ -30,7 +30,7 @@ public class RenameTagCommand extends Command {
         try {
             final ReadOnlyTag target = getTargetTag();
             addressBook.renameTag(target, newTagName);
-            return new CommandResult(String.format(MESSAGE_RENAME_TAG_SUCCESS, target));
+            return new CommandResult(String.format(MESSAGE_RENAME_TAG_SUCCESS, target, newTagName));
         } catch (IndexOutOfBoundsException ie) {
             return new CommandResult(Messages.MESSAGE_INVALID_TAG_DISPLAYED_INDEX);
         } catch (TagNotFoundException tnfe) {
