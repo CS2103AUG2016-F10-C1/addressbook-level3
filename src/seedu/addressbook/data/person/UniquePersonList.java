@@ -2,6 +2,11 @@ package seedu.addressbook.data.person;
 
 import seedu.addressbook.common.Utils;
 import seedu.addressbook.data.exception.DuplicateDataException;
+import seedu.addressbook.data.exception.IllegalValueException;
+import seedu.addressbook.data.tag.ReadOnlyTag;
+import seedu.addressbook.data.tag.Tag;
+import seedu.addressbook.data.tag.UniqueTagList;
+import seedu.addressbook.data.tag.UniqueTagList.TagNotFoundException;
 
 import java.util.*;
 
@@ -123,6 +128,29 @@ public class UniquePersonList implements Iterable<Person> {
                 return person1.getName().toString().compareToIgnoreCase(person2.getName().toString());
             }
         });
+    }
+    
+    /**
+     * Rename all persons who had the old tag with the new tag
+     * 
+     * @param oldTag tag to be replaced with new tag name
+     * @param tagToUpdate new tag name
+     * @throws IllegalValueException if the given tag name string is invalid.
+     * @throws TagNotFoundException if there is no matching tags.
+     */
+    public void renameTag(ReadOnlyTag oldTag, Tag tagToUpdate)
+            throws IllegalValueException, TagNotFoundException {
+        Tag newTag = new Tag(tagToUpdate);
+
+        for (int i = 0; i < internalList.size(); i++) {
+            Person personToEdit = new Person(internalList.get(i));
+            UniqueTagList tags = personToEdit.getTags();
+            if (tags.contains(new Tag(oldTag))) {
+                tags.update(oldTag, tagToUpdate);
+                personToEdit.setTags(tags);
+                internalList.set(i, personToEdit);
+            }
+        }
     }
 
     @Override
