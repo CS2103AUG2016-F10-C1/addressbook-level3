@@ -113,6 +113,18 @@ public class UniquePersonList implements Iterable<Person> {
         internalList.clear();
     }
 
+    /**
+     * Sorts all persons in list.
+     */
+    public void sort() {
+        Collections.sort(internalList, new Comparator<Person>() {
+            @Override
+            public int compare(Person person1, Person person2) {
+                return person1.getName().toString().compareToIgnoreCase(person2.getName().toString());
+            }
+        });
+    }
+
     @Override
     public Iterator<Person> iterator() {
         return internalList.iterator();
