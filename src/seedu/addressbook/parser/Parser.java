@@ -26,6 +26,8 @@ public class Parser {
                     + " (?<isEmailPrivate>p?)e/(?<email>[^/]+)"
                     + " (?<isAddressPrivate>p?)a/(?<address>[^/]+)"
                     + "(?<tagArguments>(?: t/[^/]+)*)"); // variable number of tags
+    
+    public static final int MAX_ARG_LENGTH = 7;
 
 
     /**
@@ -246,12 +248,20 @@ public class Parser {
 
         // Find indexes of all the data prefixes
         ArrayList<Integer> prefixIndexes = new ArrayList<Integer>();
-        for (int i = 0; i < args.length(); i++) {
-            if (args.charAt(i) == '/' && i - 1 > 0) {
-                prefixIndexes.add(i-1);
+        int j = 0;
+        while (j + 3 < args.length()) {
+            String s1 =  args.substring(j, j + Prefixes.LENGTH_DEFAULT);
+            String s2 =  args.substring(j, j + Prefixes.LENGTH_TAG);
+            if (Prefixes.DEFAULT_PREFIXES.contains(s1)) {
+                prefixIndexes.add(j);
+                j += Prefixes.LENGTH_DEFAULT - 1;
+            } else if (Prefixes.TAG_PREFIXES.contains(s2)) {
+                prefixIndexes.add(j);
+                j += Prefixes.LENGTH_TAG - 1;
             }
+            j += 1;
         }
-
+        
         // Add index of person
         temp.add(args.substring(0, prefixIndexes.get(0)).trim());
 
@@ -273,7 +283,7 @@ public class Parser {
         for (int i = 0; i < temp.size(); i++) {
             editableArgs[i] = temp.get(i);
         }
-
+        
         return editableArgs;
     }
 
@@ -288,14 +298,14 @@ public class Parser {
      */
     private static boolean isPersonDataExtractableToEdit(String args) {
         final String matchAnyEditDataPrefix =  Prefixes.NAME + '|'
-                + Prefixes.PHONE + '|' + Prefixes.EMAIL + '|' + Prefixes.ADDRESS;
+                + Prefixes.PHONE + '|' + Prefixes.EMAIL + '|' + Prefixes.ADDRESS 
+                + '|' + Prefixes.ADDTAG + '|' + Prefixes.REMOVETAG;
         final String[] splitArgs = args.trim().split(
                 matchAnyEditDataPrefix);
-        return splitArgs.length <= 5 // take up to 5 arguments
+        return splitArgs.length <= MAX_ARG_LENGTH
                 && splitArgs.length > 1 && !splitArgs[0].isEmpty() // non-empty arguments
                 && !splitArgs[1].isEmpty();
     }
-
 
     /**
      * Parses arguments in the context of the find person command.
