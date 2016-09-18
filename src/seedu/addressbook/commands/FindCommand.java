@@ -13,10 +13,13 @@ public class FindCommand extends Command {
 
     public static final String COMMAND_WORD = "find";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ":\n" + "Finds all persons whose names contain any of "
-            + "the specified keywords (case-insensitive) and displays them as a list with index numbers.\n\t"
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ":\n" + "Finds all persons whose contact details "
+            + "contain any of the specified keywords (case-insensitive) and displays them as a list with "
+            + "index numbers.\n\t"
+            + "Note: to search using tags, encase it with square brackets [ ].\n\t"
             + "Parameters: KEYWORD [MORE_KEYWORDS]...\n\t"
-            + "Example: " + COMMAND_WORD + " alice bob charlie";
+            + "Example: " + COMMAND_WORD + " alice bob charlie\n\t"
+            + "Example: " + COMMAND_WORD + " [friendsTag]";
 
     private final Set<String> keywords;
 
