@@ -41,7 +41,7 @@ public abstract class Command {
      */
     public abstract CommandResult execute();
 
-    /**
+    /** 
      * Supplies the data the command will operate on.
      */
     public void setData(AddressBook addressBook, List<? extends ReadOnlyPerson> relevantPersons) {
@@ -57,7 +57,7 @@ public abstract class Command {
     protected ReadOnlyPerson getTargetPerson() throws IndexOutOfBoundsException {
         return relevantPersons.get(getTargetIndex() - DISPLAYED_INDEX_OFFSET);
     }
-
+    
     public int getTargetIndex() {
         return targetIndex;
     }
