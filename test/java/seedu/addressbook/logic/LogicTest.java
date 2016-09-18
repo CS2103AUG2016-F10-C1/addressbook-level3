@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import seedu.addressbook.commands.CommandResult;
+
 import seedu.addressbook.commands.*;
 import seedu.addressbook.common.Messages;
 import seedu.addressbook.data.AddressBook;
@@ -226,6 +226,13 @@ public class LogicTest {
         assertEquals(expectedAB, addressBook);
         assertEquals(expectedList, logic.getLastShownTagList());
         assertEquals(addressBook, saveFile.load());
+    }
+    
+    @Test
+    public void execute_renameTag_invalidArgsFormat() throws Exception {
+        CommandResult r = logic.execute("renametag 1a 123");
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, RenameTagCommand.MESSAGE_USAGE);
+        assertEquals(expectedMessage, r.feedbackToUser);
     }
 
     @Test
