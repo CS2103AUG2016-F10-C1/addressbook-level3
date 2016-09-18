@@ -51,7 +51,7 @@ Examples:
   Returns Any person having names `Betsy`, `Tim`, or `John`
   
 ## Sorting all persons: `sort`
-Sorts the list of all persons in the address book alphabetically.<br>
+Sorts the list of all persons in the address book alphabetically and shows a list of all persons in the address book.<br>
 Format: `sort`   
 
 ## Deleting a person : `delete`
