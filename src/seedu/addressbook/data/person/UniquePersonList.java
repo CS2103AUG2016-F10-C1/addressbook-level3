@@ -11,9 +11,6 @@ import seedu.addressbook.data.tag.ReadOnlyTag;
 
 import static seedu.addressbook.ui.Gui.DISPLAYED_INDEX_OFFSET;
 
-
->>>>>>> teamrepo/master
-
 import java.util.*;
 
 /**
