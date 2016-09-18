@@ -74,15 +74,18 @@ public class Parser {
 
         case FindCommand.COMMAND_WORD:
             return prepareFind(arguments);
-       
+
         case SortCommand.COMMAND_WORD:
             return new SortCommand();
-        
+
         case ListCommand.COMMAND_WORD:
             return new ListCommand();
 
         case ViewCommand.COMMAND_WORD:
             return prepareView(arguments);
+
+        case ListTagCommand.COMMAND_WORD:
+            return new ListTagCommand();
 
         case ViewAllCommand.COMMAND_WORD:
             return prepareViewAll(arguments);

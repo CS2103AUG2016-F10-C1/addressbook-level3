@@ -2,6 +2,7 @@ package seedu.addressbook.data.tag;
 
 import seedu.addressbook.common.Utils;
 import seedu.addressbook.data.exception.DuplicateDataException;
+import seedu.addressbook.data.person.ReadOnlyPerson;
 
 import java.util.*;
 
@@ -68,6 +69,15 @@ public class UniqueTagList implements Iterable<Tag> {
      */
     public UniqueTagList(UniqueTagList source) {
         internalList.addAll(source.internalList);
+    }
+    
+    /**
+     * Unmodifiable java List view with elements cast as immutable {@link ReadOnlyTag}s.
+     * For use with other methods/libraries.
+     * Any changes to the internal list/elements are immediately visible in the returned list.
+     */
+    public List<ReadOnlyTag> immutableListView() {
+        return Collections.unmodifiableList(internalList);
     }
 
     /**
@@ -164,4 +174,5 @@ public class UniqueTagList implements Iterable<Tag> {
     public int hashCode() {
         return internalList.hashCode();
     }
+
 }

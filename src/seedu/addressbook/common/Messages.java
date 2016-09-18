@@ -11,6 +11,7 @@ public class Messages {
     public static final String MESSAGE_EXECUTE_LIST = "\n"
                                         + "Execute list to update your AddressBook or to check if your AddressBook is empty.\n";
     public static final String MESSAGE_PERSONS_LISTED_OVERVIEW = "%1$d persons listed!";
+    public static final String MESSAGE_TAGS_LISTED_OVERVIEW = "%1$d tags listed!";
     public static final String MESSAGE_PROGRAM_LAUNCH_ARGS_USAGE = "Launch command format: " +
             "java seedu.addressbook.Main [STORAGE_FILE_PATH]";
     public static final String MESSAGE_WELCOME = "Welcome to your Address Book!";
