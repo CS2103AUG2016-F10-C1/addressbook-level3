@@ -41,8 +41,10 @@ Format: `list`
 Finds persons whose names contain any of the given keywords.<br>
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
-> The search is case insensitive, the order of the keywords does not matter, all non-private contact details (except tags) is searched, 
+> The search is case insensitive, the order of the keywords does not matter, all non-private contact details is searched, 
 and persons matching at least one keyword will be returned (i.e. `OR` search).
+>
+> Note: To search using tags, enclose the tag in square brackets "[ ]".
 
 Examples: 
 * `find John`<br>
@@ -50,7 +52,9 @@ Examples:
 * `find Betsy Tim John`<br>
   Returns Any person having names `Betsy`, `Tim`, or `John`
 * `find John Clementi 96354323`<br>
-  Returns Any person having names `John`, lives in `Clementi`, and/or whose phone number is `96354323`
+  Returns Any person having names `John`, lives in `Clementi`, and/or whose phone number is `96354323` <br>
+* `find [Friends] <br>
+  Returns Any person with the `Friends` tag
   
 ## Sorting all persons: `sort`
 Sorts the list of all persons in the address book alphabetically and shows a list of all persons in the address book.<br>
