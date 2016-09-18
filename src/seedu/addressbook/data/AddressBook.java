@@ -111,9 +111,9 @@ public class AddressBook {
      *
      * @throws PersonNotFoundException if no such Person could be found.
      * @throws IllegalValueException if argument(s) in argsToEdit is/are invalid.
-     * @return Edited Person
+     * @throws TagNotFoundException  if tag to remove in argsToEdit is not found.
      */
-    public ReadOnlyPerson editPerson(ReadOnlyPerson toEdit, String[] argsToEdit) throws PersonNotFoundException, IllegalValueException {
+    public ReadOnlyPerson editPerson(ReadOnlyPerson toEdit, String[] argsToEdit) throws PersonNotFoundException, IllegalValueException, TagNotFoundException {
         return allPersons.edit(toEdit, argsToEdit);
     }
 
