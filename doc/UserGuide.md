@@ -60,14 +60,14 @@ Format: `sort`
 
 ## Editing a person: `edit`
 Edits the specified person from the address book.<br>
-Format: `edit INDEX n/NAME p/PHONE e/EMAIL a/ADDRESS`
+Format: `edit INDEX n/NAME p/PHONE e/EMAIL a/ADDRESS ta/TAGTOADD tr/TAGTOREMOVE`
 
-> Deletes the person at the specified `INDEX`. 
+> Edits the person at the specified `INDEX`. 
   The index refers to the index number shown in the most recent listing.
 
-> `INDEX` and at least one of the person's contact details to edit is required.
+> `INDEX` and at least one detail to edit is required.
 
-> Contact details to edit can be entered in any order.
+> Details to edit can be entered in any order.
 
 Examples:
 * `list`<br>
@@ -76,6 +76,9 @@ Examples:
 * `list`<br>
   `edit 1 a/123 ABC Street #01-23`<br>
   Edits the 1st person in the address book by changing the address.
+* `list`<br>
+  `edit 1 ta/Cool tr/owesMoney`<br>
+  Edits the 1st person in the address book by adding a new tag and removing an existing tag.
 
 ## Deleting a person : `delete`
 Deletes the specified person from the address book. Irreversible.<br>
