@@ -41,13 +41,13 @@ public class ParserTest {
     /**
      * Test 0-argument commands
      */
-    
+
     @Test
     public void helpCommand_parsedCorrectly() {
         final String input = "help";
         parseAndAssertCommandType(input, HelpCommand.class);
     }
-    
+
     @Test
     public void clearCommand_parsedCorrectly() {
         final String input = "clear";
@@ -67,9 +67,9 @@ public class ParserTest {
     }
 
     /**
-     * Test ingle index argument commands
+     * Test single index argument commands
      */
-    
+
     @Test
     public void deleteCommand_noArgs() {
         final String[] inputs = { "delete", "delete " };
@@ -83,7 +83,7 @@ public class ParserTest {
         final String resultMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteCommand.MESSAGE_USAGE);
         parseAndAssertIncorrectWithMessage(resultMessage, inputs);
     }
-    
+
     @Test
     public void deleteCommand_numericArg_indexParsedCorrectly() {
         final int testIndex = 1;
@@ -105,7 +105,7 @@ public class ParserTest {
         final String resultMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ViewCommand.MESSAGE_USAGE);
         parseAndAssertIncorrectWithMessage(resultMessage, inputs);
     }
-    
+
     @Test
     public void viewCommand_numericArg_indexParsedCorrectly() {
         final int testIndex = 2;
@@ -179,7 +179,7 @@ public class ParserTest {
     /**
      * Test add person command
      */
-    
+
     @Test
     public void addCommand_invalidArgs() {
         final String[] inputs = {
@@ -250,12 +250,12 @@ public class ParserTest {
     private static Person generateTestPerson() {
         try {
             return new Person(
-                new Name(Name.EXAMPLE),
-                new Phone(Phone.EXAMPLE, true),
-                new Email(Email.EXAMPLE, false),
-                new Address(Address.EXAMPLE, true),
-                new UniqueTagList(new Tag("tag1"), new Tag("tag2"), new Tag("tag3"))
-            );
+                    new Name(Name.EXAMPLE),
+                    new Phone(Phone.EXAMPLE, true),
+                    new Email(Email.EXAMPLE, false),
+                    new Address(Address.EXAMPLE, true),
+                    new UniqueTagList(new Tag("tag1"), new Tag("tag2"), new Tag("tag3"))
+                    );
         } catch (IllegalValueException ive) {
             throw new RuntimeException("test person data should be valid by definition");
         }
@@ -272,6 +272,50 @@ public class ParserTest {
         }
         return addCommand;
     }
+
+    /**
+     * Test edit person command
+     */
+    @Test
+    public void editCommand_invalidArgs() {
+        final String[] inputs = {
+                "edit",
+                "edit invalid args",
+                "edit 1",
+                "edit 1 n/", 
+                "edit 1 n/ ", 
+                "edit 1 n/e/p/a/", 
+        };
+        final String resultMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditCommand.MESSAGE_USAGE);
+        parseAndAssertIncorrectWithMessage(resultMessage, inputs);
+    }
+    
+    @Test
+    public void editCommand_invalidPersonDataInArgs() {
+        final String invalidName = "[]\\[;]";
+        final String validName = Name.EXAMPLE;
+        final String invalidPhoneArg = "p/not__numbers";
+        final String validPhoneArg = "p/" + Phone.EXAMPLE;
+        final String invalidEmailArg = "e/notAnEmail123";
+        final String validEmailArg = "e/" + Email.EXAMPLE;
+
+        // address can be any string, so no invalid address
+        final String editCommandFormatString = "edit 1 $s $s $s a/" + Address.EXAMPLE;
+
+        // test each incorrect person data field argument individually
+        final String[] inputs = {
+                // invalid name
+                String.format(editCommandFormatString, invalidName, validPhoneArg, validEmailArg),
+                // invalid phone
+                String.format(editCommandFormatString, validName, invalidPhoneArg, validEmailArg),
+                // invalid email
+                String.format(editCommandFormatString, validName, validPhoneArg, invalidEmailArg),
+        };
+        for (String input : inputs) {
+            parseAndAssertCommandType(input, IncorrectCommand.class);
+        }
+    }
+
 
     /**
      * Utility methods
