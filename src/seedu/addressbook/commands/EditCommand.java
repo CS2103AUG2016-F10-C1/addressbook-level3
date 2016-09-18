@@ -14,9 +14,10 @@ public class EditCommand extends Command {
     public static final String COMMAND_WORD = "edit";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ":\n"
-            + ": Edits any details of a person identified by the index number used in the last person listing.\n"
-            + "Parameters: INDEX n/NAME p/PHONE e/EMAIL a/ADDRESS\n"
-            + "Example: " + COMMAND_WORD + " 1 n/John Doe p/98765432 e/johnd@gmail.com a/311, Clementi Ave 2, #02-25";
+            + "Edits any details of a person identified by the index number used in the last person listing.\n\t"
+            + "Parameters: INDEX n/NAME p/PHONE e/EMAIL a/ADDRESS\n\t"
+            + "Example: " + COMMAND_WORD 
+            + " 1 n/John Doe p/98765432 e/johnd@gmail.com a/311, Clementi Ave 2, #02-25";
 
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Person: %1$s";
 
