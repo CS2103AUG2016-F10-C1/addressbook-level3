@@ -227,11 +227,6 @@ public class LogicTest {
         assertEquals(expectedList, logic.getLastShownTagList());
         assertEquals(addressBook, saveFile.load());
     }
-    
-    @Test
-    public void hello() {
-        assertEquals("hello", "world");
-    }
 
     @Test
     public void execute_view_invalidArgsFormat() throws Exception {
