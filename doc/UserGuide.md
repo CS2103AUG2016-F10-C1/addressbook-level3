@@ -50,6 +50,25 @@ Examples:
 * `find Betsy Tim John`<br>
   Returns Any person having names `Betsy`, `Tim`, or `John`
 
+## Editing a person: `edit`
+Edits the specified person from the address book.<br>
+Format: `edit INDEX n/NAME p/PHONE e/EMAIL a/ADDRESS`
+
+> Deletes the person at the specified `INDEX`. 
+  The index refers to the index number shown in the most recent listing.
+
+> `INDEX` and at least one of the person's contact details to edit is required.
+
+> Contact details to edit can be entered in any order.
+
+Examples:
+* `list`<br>
+  `edit 2 n/Jonathan Doe p/9123456`<br>
+  Edits the 2nd person in the address book by changing his name and phone number.
+* `list`<br>
+  `edit 1 a/123 ABC Street #01-23`<br>
+  Edits the 1st person in the address book by changing the address.
+
 ## Deleting a person : `delete`
 Deletes the specified person from the address book. Irreversible.<br>
 Format: `delete INDEX`
