@@ -1,7 +1,11 @@
 package seedu.addressbook.data.person;
 
 import seedu.addressbook.common.Utils;
+import seedu.addressbook.common.Prefixes;
 import seedu.addressbook.data.exception.DuplicateDataException;
+import seedu.addressbook.data.exception.IllegalValueException;
+
+import static seedu.addressbook.ui.Gui.DISPLAYED_INDEX_OFFSET;
 
 import java.util.*;
 
@@ -12,7 +16,6 @@ import java.util.*;
  * @see Utils#elementsAreUnique(Collection)
  */
 public class UniquePersonList implements Iterable<Person> {
-
     /**
      * Signals that an operation would have violated the 'no duplicates' property of the list.
      */
@@ -95,6 +98,43 @@ public class UniquePersonList implements Iterable<Person> {
     }
 
     /**
+     * Edits the equivalent person from the list.
+     * 
+     * @throws PersonNotFoundException if no such person could be found in the list.
+     */
+    public ReadOnlyPerson edit(ReadOnlyPerson toEdit, String[] argsToEdit) throws PersonNotFoundException, IllegalValueException {
+        if (!contains(toEdit)) {
+            throw new PersonNotFoundException();
+        }
+        Person personToEdit = new Person(toEdit);
+        for (int i = 1; i < argsToEdit.length; i++) {
+            String inputData = argsToEdit[i];
+            String dataPrefix = inputData.substring(0, Prefixes.LENGTH);
+            String data = inputData.substring(Prefixes.LENGTH);
+            switch (dataPrefix) {
+            case Prefixes.NAME:
+                Name editedName = new Name(data);
+                personToEdit.setName(editedName);
+                break;
+            case Prefixes.PHONE:
+                Phone editedPhone = new Phone(data, personToEdit.getPhone().isPrivate());
+                personToEdit.setPhone(editedPhone);
+                break;
+            case Prefixes.EMAIL:
+                Email editedEmail = new Email(data, personToEdit.getEmail().isPrivate());
+                personToEdit.setEmail(editedEmail);
+                break;
+            case Prefixes.ADDRESS:
+                Address editedAddress = new Address(data, personToEdit.getAddress().isPrivate());
+                personToEdit.setAddress(editedAddress);
+                break;
+            }
+        }
+        internalList.set(Integer.parseInt(argsToEdit[0]) - DISPLAYED_INDEX_OFFSET, personToEdit);
+        return personToEdit;
+    }
+
+    /**
      * Removes the equivalent person from the list.
      *
      * @throws PersonNotFoundException if no such person could be found in the list.
@@ -104,7 +144,7 @@ public class UniquePersonList implements Iterable<Person> {
         if (!personFoundAndDeleted) {
             throw new PersonNotFoundException();
         }
-    }
+    }  
 
     /**
      * Clears all persons in list.
@@ -122,8 +162,8 @@ public class UniquePersonList implements Iterable<Person> {
     public boolean equals(Object other) {
         return other == this // short circuit if same object
                 || (other instanceof UniquePersonList // instanceof handles nulls
-                && this.internalList.equals(
-                        ((UniquePersonList) other).internalList));
+                        && this.internalList.equals(
+                                ((UniquePersonList) other).internalList));
     }
 
     @Override
