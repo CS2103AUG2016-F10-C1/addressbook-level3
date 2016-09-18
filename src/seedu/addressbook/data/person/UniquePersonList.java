@@ -146,8 +146,7 @@ public class UniquePersonList implements Iterable<Person> {
             Person personToEdit = new Person(internalList.get(i));
             UniqueTagList tags = personToEdit.getTags();
             if (tags.contains(new Tag(oldTag))) {
-                tags.remove(new Tag(oldTag));
-                tags.add(newTag);
+                tags.update(oldTag, tagToUpdate);
                 personToEdit.setTags(tags);
                 internalList.set(i, personToEdit);
             }
