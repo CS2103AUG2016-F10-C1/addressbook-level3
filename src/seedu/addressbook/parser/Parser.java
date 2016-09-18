@@ -1,6 +1,7 @@
 package seedu.addressbook.parser;
 
 import seedu.addressbook.commands.*;
+import seedu.addressbook.common.Prefixes;
 import seedu.addressbook.data.exception.IllegalValueException;
 
 import java.util.*;
@@ -8,7 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static seedu.addressbook.common.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
-import static seedu.addressbook.common.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
 
 /**
  * Parses user input.
@@ -60,33 +60,36 @@ public class Parser {
         final String arguments = matcher.group("arguments");
         switch (commandWord) {
 
-            case AddCommand.COMMAND_WORD:
-                return prepareAdd(arguments);
+        case AddCommand.COMMAND_WORD:
+            return prepareAdd(arguments);
 
-            case DeleteCommand.COMMAND_WORD:
-                return prepareDelete(arguments);
+        case EditCommand.COMMAND_WORD:
+            return prepareEdit(arguments);
 
-            case ClearCommand.COMMAND_WORD:
-                return new ClearCommand();
+        case DeleteCommand.COMMAND_WORD:
+            return prepareDelete(arguments);
 
-            case FindCommand.COMMAND_WORD:
-                return prepareFind(arguments);
+        case ClearCommand.COMMAND_WORD:
+            return new ClearCommand();
 
-            case ListCommand.COMMAND_WORD:
-                return new ListCommand();
+        case FindCommand.COMMAND_WORD:
+            return prepareFind(arguments);
 
-            case ViewCommand.COMMAND_WORD:
-                return prepareView(arguments);
+        case ListCommand.COMMAND_WORD:
+            return new ListCommand();
 
-            case ViewAllCommand.COMMAND_WORD:
-                return prepareViewAll(arguments);
+        case ViewCommand.COMMAND_WORD:
+            return prepareView(arguments);
 
-            case ExitCommand.COMMAND_WORD:
-                return new ExitCommand();
+        case ViewAllCommand.COMMAND_WORD:
+            return prepareViewAll(arguments);
 
-            case HelpCommand.COMMAND_WORD: // Fallthrough
-            default:
-                return new HelpCommand();
+        case ExitCommand.COMMAND_WORD:
+            return new ExitCommand();
+
+        case HelpCommand.COMMAND_WORD: // Fallthrough
+        default:
+            return new HelpCommand();
         }
     }
 
@@ -116,7 +119,7 @@ public class Parser {
                     isPrivatePrefixPresent(matcher.group("isAddressPrivate")),
 
                     getTagsFromArgs(matcher.group("tagArguments"))
-            );
+                    );
         } catch (IllegalValueException ive) {
             return new IncorrectCommand(ive.getMessage());
         }
@@ -143,6 +146,25 @@ public class Parser {
         return new HashSet<>(tagStrings);
     }
 
+    /**
+     * Parses arguments in the context of the edit person command.
+     *
+     * @param args full command args string
+     * @return the prepared command
+     */
+    private Command prepareEdit(String args) {
+        if (isPersonDataExtractableToEdit(args)) {
+            String[] argsToEdit = parseArgsToEdit(args);
+            String index = argsToEdit[0];
+            try {
+                final int targetIndex = parseArgsAsDisplayedIndex(index);
+                return new EditCommand(targetIndex, argsToEdit);
+            } catch (ParseException | NumberFormatException e) {
+                return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditCommand.MESSAGE_USAGE));
+            }
+        }
+        return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditCommand.MESSAGE_USAGE));
+    }
 
     /**
      * Parses arguments in the context of the delete person command.
@@ -166,7 +188,6 @@ public class Parser {
      * @return the prepared command
      */
     private Command prepareView(String args) {
-
         try {
             final int targetIndex = parseArgsAsDisplayedIndex(args);
             return new ViewCommand(targetIndex);
@@ -183,7 +204,6 @@ public class Parser {
      * @return the prepared command
      */
     private Command prepareViewAll(String args) {
-
         try {
             final int targetIndex = parseArgsAsDisplayedIndex(args);
             return new ViewAllCommand(targetIndex);
@@ -207,6 +227,67 @@ public class Parser {
             throw new ParseException("Could not find index number to parse");
         }
         return Integer.parseInt(matcher.group("targetIndex"));
+    }
+
+    /**
+     * Parses the given arguments string as string array of arguments to edit
+     *
+     * @param args arguments string 
+     * @return string array of arguments to edit
+     */
+    private String[] parseArgsToEdit(String args) {
+        ArrayList<String> temp = new ArrayList<String>();
+
+        // Find indexes of all the data prefixes
+        ArrayList<Integer> prefixIndexes = new ArrayList<Integer>();
+        for (int i = 0; i < args.length(); i++) {
+            if (args.charAt(i) == '/' && i - 1 > 0) {
+                prefixIndexes.add(i-1);
+            }
+        }
+
+        // Add index of person
+        temp.add(args.substring(0, prefixIndexes.get(0)).trim());
+
+        // Add remaining arguments up to second last argument
+        for (int i = 0; i < prefixIndexes.size() - 1; i++) {
+            int start = prefixIndexes.get(i);
+            int stop = prefixIndexes.get(i + 1);
+            String arg = args.substring(start, stop).trim();
+            temp.add(arg);
+        }
+
+        // Add last argument
+        int start = prefixIndexes.get(prefixIndexes.size() - 1);
+        int stop = args.length();
+        String arg = args.substring(start, stop).trim();
+        temp.add(arg);
+
+        String [] editableArgs = new String[temp.size()];
+        for (int i = 0; i < temp.size(); i++) {
+            editableArgs[i] = temp.get(i);
+        }
+
+        return editableArgs;
+    }
+
+    /**
+     * Checks whether edit data (index, email, name, phone, address) can be extracted
+     * from the argument string. Format is INDEX n/[name] p/[phone] e/[email] a/[address],
+     * name, phone, email and address positions can be swapped.
+     *
+     * @param args full command args string from the user
+     * @return whether format of edit command arguments allows parsing into
+     *         individual arguments
+     */
+    private static boolean isPersonDataExtractableToEdit(String args) {
+        final String matchAnyEditDataPrefix =  Prefixes.NAME + '|'
+                + Prefixes.PHONE + '|' + Prefixes.EMAIL + '|' + Prefixes.ADDRESS;
+        final String[] splitArgs = args.trim().split(
+                matchAnyEditDataPrefix);
+        return splitArgs.length <= 5 // take up to 5 arguments
+                && splitArgs.length > 1 && !splitArgs[0].isEmpty() // non-empty arguments
+                && !splitArgs[1].isEmpty();
     }
 
 
