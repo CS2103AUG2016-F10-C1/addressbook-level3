@@ -1,6 +1,7 @@
 package seedu.addressbook.commands;
 
 import seedu.addressbook.data.person.ReadOnlyPerson;
+import seedu.addressbook.data.tag.Tag;
 
 import java.util.*;
 
@@ -12,10 +13,13 @@ public class FindCommand extends Command {
 
     public static final String COMMAND_WORD = "find";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ":\n" + "Finds all persons whose names contain any of "
-            + "the specified keywords (case-sensitive) and displays them as a list with index numbers.\n\t"
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ":\n" + "Finds all persons whose contact details "
+            + "contain any of the specified keywords (case-insensitive) and displays them as a list with "
+            + "index numbers.\n\t"
+            + "Note: to search using tags, encase it with square brackets [ ].\n\t"
             + "Parameters: KEYWORD [MORE_KEYWORDS]...\n\t"
-            + "Example: " + COMMAND_WORD + " alice bob charlie";
+            + "Example: " + COMMAND_WORD + " alice bob charlie\n\t"
+            + "Example: " + COMMAND_WORD + " [friendsTag]";
 
     private final Set<String> keywords;
 
@@ -45,12 +49,65 @@ public class FindCommand extends Command {
     private List<ReadOnlyPerson> getPersonsWithNameContainingAnyKeyword(Set<String> keywords) {
         final List<ReadOnlyPerson> matchedPersons = new ArrayList<>();
         for (ReadOnlyPerson person : addressBook.getAllPersons()) {
-            final Set<String> wordsInName = new HashSet<>(person.getName().getWordsInName());
-            if (!Collections.disjoint(wordsInName, keywords)) {
+            final Set<String> dataInPerson = fillPersonDataSet(person);
+            if (!Collections.disjoint(changeToUpperCase(dataInPerson), changeToUpperCase(keywords))) {
                 matchedPersons.add(person);
             }
         }
         return matchedPersons;
+    }
+    
+    /**
+     * Consolidate all the non-private data of a person into a set
+     * 
+     * @param person
+     * @return set of a person's data
+     */
+    private Set<String> fillPersonDataSet(ReadOnlyPerson person) {
+        
+        
+        final StringBuilder builder = new StringBuilder();
+        builder.append(person.getName())
+                .append(" ");
+        if (!person.getPhone().isPrivate()) {
+            builder.append(person.getPhone())
+                .append(" ");
+        }
+
+        if (!person.getEmail().isPrivate()) {
+            builder.append(person.getEmail())
+                .append(" ");
+        }
+        
+        if (!person.getAddress().isPrivate()) {
+            builder.append(person.getAddress())
+                .append(" ");
+        }
+
+        for (Tag tag : person.getTags()) {
+            builder.append(tag)
+                .append(" ");
+        }
+      
+        
+        Set<String> dataInPerson = new HashSet<>(Arrays.asList(builder.toString().split("\\s+")));
+
+
+        return dataInPerson;
+    }
+    
+    /**
+     * Changes all words in wordsInName and keywords to Upper Case
+     * 
+     * @param setToChange
+     * @return new set of words that are in upper case
+     */
+    private Set<String> changeToUpperCase(Set<String> setToChange) {
+        Set<String> caseInsensitiveSet = new HashSet<String>();
+        for (String word : setToChange) {
+            caseInsensitiveSet.add(word.toUpperCase());
+        }
+        return caseInsensitiveSet;
     }
 
 }
