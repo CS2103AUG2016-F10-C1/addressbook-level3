@@ -388,6 +388,61 @@ public class LogicTest {
                                 false,
                                 lastShownList);
     }
+    
+    @Test
+    public void execute_edit_invalidArgsFormat() throws Exception {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditCommand.MESSAGE_USAGE);
+        assertCommandBehavior("edit ", expectedMessage);
+        assertCommandBehavior("edit arg not number", expectedMessage);
+        assertCommandBehavior("edit 1", expectedMessage);
+    }
+    
+    @Test
+    public void execute_edit_editedPersonCorrectly() throws Exception {
+        TestDataHelper helper = new TestDataHelper();
+        Person p1 = helper.generatePerson(1, false);
+        Person p2 = helper.generatePerson(2, true);
+        Person p3 = helper.generatePerson(3, true);
+
+        List<Person> threePersons = helper.generatePersonList(p1, p2, p3);
+
+        AddressBook expectedAB = helper.generateAddressBook(threePersons);
+        expectedAB.editPerson(p1, new String[]{"1", "n/Edited Person 1", "p/99999999"});
+        
+        helper.addToAddressBook(addressBook, threePersons);
+        logic.setLastShownPersonList(threePersons);
+        
+        p1.setName(new Name("Edited Person 1"));
+        p1.setPhone(new Phone("99999999", false));
+        assertCommandBehavior("edit 1 n/Edited Person 1 p/99999999",
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, p1),
+                expectedAB,
+                false,
+                threePersons);
+    }
+    
+    @Test
+    public void execute_edit_missingInAddressBook() throws Exception {
+        TestDataHelper helper = new TestDataHelper();
+        Person p1 = helper.generatePerson(1, false);
+        Person p2 = helper.generatePerson(2, true);
+        Person p3 = helper.generatePerson(3, true);
+
+        List<Person> threePersons = helper.generatePersonList(p1, p2, p3);
+
+        AddressBook expectedAB = helper.generateAddressBook(threePersons);
+        expectedAB.removePerson(p2);
+
+        helper.addToAddressBook(addressBook, threePersons);
+        addressBook.removePerson(p2);
+        logic.setLastShownPersonList(threePersons);
+
+        assertCommandBehavior("edit 2 n/Edited Person 2",
+                                Messages.MESSAGE_PERSON_NOT_IN_ADDRESSBOOK + Messages.MESSAGE_EXECUTE_LIST,
+                                expectedAB,
+                                false,
+                                threePersons);
+    }
 
     @Test
     public void execute_delete_invalidArgsFormat() throws Exception {

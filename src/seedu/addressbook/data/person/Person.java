@@ -59,6 +59,22 @@ public class Person implements ReadOnlyPerson {
         return new UniqueTagList(tags);
     }
 
+    public void setName(Name newName) {
+        this.name = newName;
+    }
+
+    public void setPhone(Phone newPhone) {
+        this.phone = newPhone;
+    }
+
+    public void setEmail(Email newEmail) {
+        this.email = newEmail;
+    }
+
+    public void setAddress(Address newAddress) {
+        this.address = newAddress;
+    }
+
     /**
      * Replaces this person's tags with the tags in the argument tag list.
      */
@@ -70,7 +86,7 @@ public class Person implements ReadOnlyPerson {
     public boolean equals(Object other) {
         return other == this // short circuit if same object
                 || (other instanceof ReadOnlyPerson // instanceof handles nulls
-                && this.isSameStateAs((ReadOnlyPerson) other));
+                        && this.isSameStateAs((ReadOnlyPerson) other));
     }
 
     @Override

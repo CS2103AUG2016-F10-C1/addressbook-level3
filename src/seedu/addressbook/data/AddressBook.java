@@ -122,6 +122,17 @@ public class AddressBook {
     public boolean containsTag(Tag key) {
         return allTags.contains(key);
     }
+    
+    /**
+     * Edits the equivalent person from the address book.
+     *
+     * @throws PersonNotFoundException if no such Person could be found.
+     * @throws IllegalValueException if argument(s) in argsToEdit is/are invalid.
+     * @throws TagNotFoundException  if tag to remove in argsToEdit is not found.
+     */
+    public ReadOnlyPerson editPerson(ReadOnlyPerson toEdit, String[] argsToEdit) throws PersonNotFoundException, IllegalValueException, TagNotFoundException {
+        return allPersons.edit(toEdit, argsToEdit);
+    }
 
     /**
      * Removes the equivalent person from the address book.
@@ -131,7 +142,7 @@ public class AddressBook {
     public void removePerson(ReadOnlyPerson toRemove) throws PersonNotFoundException {
         allPersons.remove(toRemove);
     }
-
+    
     /**
      * Removes the equivalent Tag from the address book.
      *
@@ -183,4 +194,5 @@ public class AddressBook {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(allPersons, allTags);
     }
+
 }
