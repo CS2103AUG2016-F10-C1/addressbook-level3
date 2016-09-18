@@ -41,6 +41,18 @@ Format: `list`
 Shows a list of all tags in the address book.<br>
 Format: `listtag`
 
+## Renaming a tag: `renametag`
+Rename a tag in the address book.<br>
+Format: `renametag INDEX NEW_TAG_NAME`
+
+> Renames the tag at the specified `INDEX`. 
+  The index refers to the index number shown in the most recent tag listing.
+
+Examples: 
+* `listtag`<br>
+  `renametag 1 family`<br>
+  Renames the 1st tag in the results of the `listtag` command.
+
 ## Finding all persons containing any keyword in their name: `find`
 Finds persons whose names contain any of the given keywords.<br>
 Format: `find KEYWORD [MORE_KEYWORDS]`

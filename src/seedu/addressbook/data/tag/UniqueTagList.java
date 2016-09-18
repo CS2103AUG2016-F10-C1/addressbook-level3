@@ -2,8 +2,7 @@ package seedu.addressbook.data.tag;
 
 import seedu.addressbook.common.Utils;
 import seedu.addressbook.data.exception.DuplicateDataException;
-import seedu.addressbook.data.person.ReadOnlyPerson;
-
+import seedu.addressbook.data.exception.IllegalValueException;
 import java.util.*;
 
 /**
@@ -140,6 +139,21 @@ public class UniqueTagList implements Iterable<Tag> {
         if (!TagFoundAndDeleted) {
             throw new TagNotFoundException();
         }
+    }
+    
+    /**
+     * Update the equivalent Tag from the list.
+     *
+     * @throws TagNotFoundException if no such Tag could be found in the list.
+     * @throws IllegalValueException if the given tag name string is invalid.
+     */
+    public void update(ReadOnlyTag oldTag, Tag tagToUpdate)
+            throws TagNotFoundException, IllegalValueException {
+        int selectedIndex = internalList.indexOf(new Tag(oldTag));
+        if (selectedIndex == -1) {
+            throw new TagNotFoundException();
+        }
+        internalList.set(selectedIndex, tagToUpdate);
     }
 
     /**

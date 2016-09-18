@@ -29,6 +29,8 @@ public class Parser {
     
     public static final int MAX_ARG_LENGTH = 7;
 
+    public static final Pattern TAG_DATA_ARGS_FORMAT =
+            Pattern.compile("(?<targetIndex>\\d+)" + " (?<tagName>\\w+)");
 
     /**
      * Signals that the user input could not be parsed.
@@ -88,6 +90,9 @@ public class Parser {
 
         case ListTagCommand.COMMAND_WORD:
             return new ListTagCommand();
+		
+		case RenameTagCommand.COMMAND_WORD:
+            return prepareRenameTag(arguments);
 
         case ViewAllCommand.COMMAND_WORD:
             return prepareViewAll(arguments);
@@ -187,6 +192,24 @@ public class Parser {
         } catch (ParseException | NumberFormatException e) {
             return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteCommand.MESSAGE_USAGE));
         }
+    }
+    
+    /**
+     * Parses arguments in the context of the rename tag command.
+     *
+     * @param args full command args string
+     * @return the prepared command
+     */
+    private Command prepareRenameTag(String args) {
+        final Matcher matcher = TAG_DATA_ARGS_FORMAT.matcher(args.trim());
+        // Validate arg string format
+        if (!matcher.matches()) {
+            return new IncorrectCommand(
+                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, RenameTagCommand.MESSAGE_USAGE));
+        }
+
+        return new RenameTagCommand(Integer.parseInt(matcher.group("targetIndex")),
+                matcher.group("tagName"));
     }
 
     /**

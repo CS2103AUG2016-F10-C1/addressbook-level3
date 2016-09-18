@@ -3,6 +3,7 @@ package seedu.addressbook.data;
 import seedu.addressbook.data.exception.IllegalValueException;
 import seedu.addressbook.data.person.*;
 import seedu.addressbook.data.person.UniquePersonList.*;
+import seedu.addressbook.data.tag.ReadOnlyTag;
 import seedu.addressbook.data.tag.Tag;
 import seedu.addressbook.data.tag.UniqueTagList;
 import seedu.addressbook.data.tag.UniqueTagList.*;
@@ -91,6 +92,22 @@ public class AddressBook {
     public void addTag(Tag toAdd) throws DuplicateTagException {
         allTags.add(toAdd);
     }
+    
+    /**
+     * Renames all person's tag if they have the tag
+     * 
+     * @param oldTag tag to be replaced with new tag name
+     * @param newTagName new tag name
+     * @throws TagNotFoundException if there is no matching tags.
+     * @throws IllegalValueException if the given tag name string is invalid.
+     */
+    public void renameTag(ReadOnlyTag oldTag, String newTagName)
+            throws IllegalValueException, TagNotFoundException {
+        Tag tagToUpdate = new Tag(newTagName);
+        allPersons.renameTag(oldTag, tagToUpdate);
+        allTags.update(oldTag, tagToUpdate);
+    }
+
 
     /**
      * Checks if an equivalent person exists in the address book.

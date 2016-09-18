@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import seedu.addressbook.commands.CommandResult;
+
 import seedu.addressbook.commands.*;
 import seedu.addressbook.common.Messages;
 import seedu.addressbook.data.AddressBook;
@@ -226,6 +226,36 @@ public class LogicTest {
         assertEquals(expectedAB, addressBook);
         assertEquals(expectedList, logic.getLastShownTagList());
         assertEquals(addressBook, saveFile.load());
+    }
+    
+    @Test
+    public void execute_renameTag_invalidArgsFormat() throws Exception {
+        CommandResult r = logic.execute("renametag 1a 123");
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, RenameTagCommand.MESSAGE_USAGE);
+        assertEquals(expectedMessage, r.feedbackToUser);
+    }
+    
+    @Test
+    public void execute_renameTag_invalidIndex() throws Exception {
+        CommandResult r = logic.execute("renametag 1 123");
+        assertEquals(Messages.MESSAGE_INVALID_TAG_DISPLAYED_INDEX, r.feedbackToUser);
+    }
+    
+    @Test
+    public void execute_renameTag_successful() throws Exception {
+        TestDataHelper helper = new TestDataHelper();
+        AddressBook expectedAB = new AddressBook();
+        expectedAB.addPerson(helper.adam());
+        expectedAB.addPerson(helper.jack_tag4());
+        
+        addressBook.addPerson(helper.adam());
+        addressBook.addPerson(helper.jack_tag3());
+        
+        CommandResult r = logic.execute("listtag");
+        r = logic.execute("renametag 3 tag4");
+        
+        assertEquals(addressBook, expectedAB);
+        addressBook.clear();
     }
 
     @Test
@@ -552,6 +582,26 @@ public class LogicTest {
             Tag tag1 = new Tag("tag1");
             Tag tag2 = new Tag("tag2");
             UniqueTagList tags = new UniqueTagList(tag1, tag2);
+            return new Person(name, privatePhone, email, privateAddress, tags);
+        }
+        
+        Person jack_tag3() throws Exception {
+            Name name = new Name("Jack Chan");
+            Phone privatePhone = new Phone("222222", true);
+            Email email = new Email("jack@gmail.com", false);
+            Address privateAddress = new Address("222, alpha street", true);
+            Tag tag1 = new Tag("tag3");
+            UniqueTagList tags = new UniqueTagList(tag1);
+            return new Person(name, privatePhone, email, privateAddress, tags);
+        }
+        
+        Person jack_tag4() throws Exception {
+            Name name = new Name("Jack Chan");
+            Phone privatePhone = new Phone("222222", true);
+            Email email = new Email("jack@gmail.com", false);
+            Address privateAddress = new Address("222, alpha street", true);
+            Tag tag1 = new Tag("tag4");
+            UniqueTagList tags = new UniqueTagList(tag1);
             return new Person(name, privatePhone, email, privateAddress, tags);
         }
 
