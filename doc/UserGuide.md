@@ -41,6 +41,18 @@ Format: `list`
 Shows a list of all tags in the address book.<br>
 Format: `listtag`
 
+## Renaming a tag: `renametag`
+Rename a tag in the address book.<br>
+Format: `renametag INDEX NEW_TAG_NAME`
+
+> Renames the tag at the specified `INDEX`. 
+  The index refers to the index number shown in the most recent tag listing.
+
+Examples: 
+* `listtag`<br>
+  `renametag 1 family`<br>
+  Renames the 1st tag in the results of the `listtag` command.
+
 ## Finding all persons containing any keyword in their contact details: `find`
 Finds persons whose contact details contain any of the given keywords.<br>
 Format: `find KEYWORD [MORE_KEYWORDS]`
@@ -63,6 +75,28 @@ Examples:
 ## Sorting all persons: `sort`
 Sorts the list of all persons in the address book alphabetically and shows a list of all persons in the address book.<br>
 Format: `sort`   
+
+## Editing a person: `edit`
+Edits the specified person from the address book.<br>
+Format: `edit INDEX n/NAME p/PHONE e/EMAIL a/ADDRESS ta/TAGTOADD tr/TAGTOREMOVE`
+
+> Edits the person at the specified `INDEX`. 
+  The index refers to the index number shown in the most recent listing.
+
+> `INDEX` and at least one detail to edit is required.
+
+> Details to edit can be entered in any order.
+
+Examples:
+* `list`<br>
+  `edit 2 n/Jonathan Doe p/9123456`<br>
+  Edits the 2nd person in the address book by changing his name and phone number.
+* `list`<br>
+  `edit 1 a/123 ABC Street #01-23`<br>
+  Edits the 1st person in the address book by changing the address.
+* `list`<br>
+  `edit 1 ta/Cool tr/owesMoney`<br>
+  Edits the 1st person in the address book by adding a new tag and removing an existing tag.
 
 ## Deleting a person : `delete`
 Deletes the specified person from the address book. Irreversible.<br>

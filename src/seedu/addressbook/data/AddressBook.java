@@ -1,7 +1,9 @@
 package seedu.addressbook.data;
 
+import seedu.addressbook.data.exception.IllegalValueException;
 import seedu.addressbook.data.person.*;
 import seedu.addressbook.data.person.UniquePersonList.*;
+import seedu.addressbook.data.tag.ReadOnlyTag;
 import seedu.addressbook.data.tag.Tag;
 import seedu.addressbook.data.tag.UniqueTagList;
 import seedu.addressbook.data.tag.UniqueTagList.*;
@@ -90,6 +92,22 @@ public class AddressBook {
     public void addTag(Tag toAdd) throws DuplicateTagException {
         allTags.add(toAdd);
     }
+    
+    /**
+     * Renames all person's tag if they have the tag
+     * 
+     * @param oldTag tag to be replaced with new tag name
+     * @param newTagName new tag name
+     * @throws TagNotFoundException if there is no matching tags.
+     * @throws IllegalValueException if the given tag name string is invalid.
+     */
+    public void renameTag(ReadOnlyTag oldTag, String newTagName)
+            throws IllegalValueException, TagNotFoundException {
+        Tag tagToUpdate = new Tag(newTagName);
+        allPersons.renameTag(oldTag, tagToUpdate);
+        allTags.update(oldTag, tagToUpdate);
+    }
+
 
     /**
      * Checks if an equivalent person exists in the address book.
@@ -104,6 +122,17 @@ public class AddressBook {
     public boolean containsTag(Tag key) {
         return allTags.contains(key);
     }
+    
+    /**
+     * Edits the equivalent person from the address book.
+     *
+     * @throws PersonNotFoundException if no such Person could be found.
+     * @throws IllegalValueException if argument(s) in argsToEdit is/are invalid.
+     * @throws TagNotFoundException  if tag to remove in argsToEdit is not found.
+     */
+    public ReadOnlyPerson editPerson(ReadOnlyPerson toEdit, String[] argsToEdit) throws PersonNotFoundException, IllegalValueException, TagNotFoundException {
+        return allPersons.edit(toEdit, argsToEdit);
+    }
 
     /**
      * Removes the equivalent person from the address book.
@@ -113,7 +142,7 @@ public class AddressBook {
     public void removePerson(ReadOnlyPerson toRemove) throws PersonNotFoundException {
         allPersons.remove(toRemove);
     }
-
+    
     /**
      * Removes the equivalent Tag from the address book.
      *
@@ -165,4 +194,5 @@ public class AddressBook {
         // use this method for custom fields hashing instead of implementing your own
         return Objects.hash(allPersons, allTags);
     }
+
 }

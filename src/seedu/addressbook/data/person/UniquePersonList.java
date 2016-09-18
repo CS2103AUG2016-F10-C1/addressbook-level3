@@ -1,7 +1,15 @@
 package seedu.addressbook.data.person;
 
 import seedu.addressbook.common.Utils;
+import seedu.addressbook.common.Prefixes;
 import seedu.addressbook.data.exception.DuplicateDataException;
+import seedu.addressbook.data.exception.IllegalValueException;
+import seedu.addressbook.data.tag.Tag;
+import seedu.addressbook.data.tag.UniqueTagList;
+import seedu.addressbook.data.tag.UniqueTagList.TagNotFoundException;
+import seedu.addressbook.data.tag.ReadOnlyTag;
+
+import static seedu.addressbook.ui.Gui.DISPLAYED_INDEX_OFFSET;
 
 import java.util.*;
 
@@ -12,7 +20,6 @@ import java.util.*;
  * @see Utils#elementsAreUnique(Collection)
  */
 public class UniquePersonList implements Iterable<Person> {
-
     /**
      * Signals that an operation would have violated the 'no duplicates' property of the list.
      */
@@ -95,6 +102,59 @@ public class UniquePersonList implements Iterable<Person> {
     }
 
     /**
+     * Edits the equivalent person from the list.
+     * 
+     * @throws PersonNotFoundException if no such Person could be found.
+     * @throws IllegalValueException if argument(s) in argsToEdit is/are invalid.
+     * @throws TagNotFoundException  if tag to remove in argsToEdit is not found.
+     */
+    public ReadOnlyPerson edit(ReadOnlyPerson toEdit, String[] argsToEdit) throws PersonNotFoundException, 
+    IllegalValueException, TagNotFoundException {
+        if (!contains(toEdit)) {
+            throw new PersonNotFoundException();
+        }
+        Person personToEdit = new Person(toEdit);
+        for (int i = 1; i < argsToEdit.length; i++) {
+            String inputData = argsToEdit[i];
+            int backslashIndex = inputData.indexOf('/') + 1;
+            String dataPrefix = inputData.substring(0, backslashIndex);
+            String data = inputData.substring(backslashIndex);
+            switch (dataPrefix) {
+            case Prefixes.NAME:
+                Name editedName = new Name(data);
+                personToEdit.setName(editedName);
+                break;
+            case Prefixes.PHONE:
+                Phone editedPhone = new Phone(data, personToEdit.getPhone().isPrivate());
+                personToEdit.setPhone(editedPhone);
+                break;
+            case Prefixes.EMAIL:
+                Email editedEmail = new Email(data, personToEdit.getEmail().isPrivate());
+                personToEdit.setEmail(editedEmail);
+                break;
+            case Prefixes.ADDRESS:
+                Address editedAddress = new Address(data, personToEdit.getAddress().isPrivate());
+                personToEdit.setAddress(editedAddress);
+                break;
+            case Prefixes.ADDTAG:
+                Tag toAdd = new Tag(data);
+                UniqueTagList replacement = personToEdit.getTags();
+                replacement.add(toAdd);
+                personToEdit.setTags(replacement);
+                break;
+            case Prefixes.REMOVETAG:
+                Tag toRemove = new Tag(data);
+                UniqueTagList modified = personToEdit.getTags();
+                modified.remove(toRemove);
+                personToEdit.setTags(modified);
+                break;
+            }
+        }
+        internalList.set(Integer.parseInt(argsToEdit[0]) - DISPLAYED_INDEX_OFFSET, personToEdit);
+        return personToEdit;
+    }
+
+    /**
      * Removes the equivalent person from the list.
      *
      * @throws PersonNotFoundException if no such person could be found in the list.
@@ -104,7 +164,7 @@ public class UniquePersonList implements Iterable<Person> {
         if (!personFoundAndDeleted) {
             throw new PersonNotFoundException();
         }
-    }
+    }  
 
     /**
      * Clears all persons in list.
@@ -124,6 +184,29 @@ public class UniquePersonList implements Iterable<Person> {
             }
         });
     }
+    
+    /**
+     * Rename all persons who had the old tag with the new tag
+     * 
+     * @param oldTag tag to be replaced with new tag name
+     * @param tagToUpdate new tag name
+     * @throws IllegalValueException if the given tag name string is invalid.
+     * @throws TagNotFoundException if there is no matching tags.
+     */
+    public void renameTag(ReadOnlyTag oldTag, Tag tagToUpdate)
+            throws IllegalValueException, TagNotFoundException {
+        Tag newTag = new Tag(tagToUpdate);
+
+        for (int i = 0; i < internalList.size(); i++) {
+            Person personToEdit = new Person(internalList.get(i));
+            UniqueTagList tags = personToEdit.getTags();
+            if (tags.contains(new Tag(oldTag))) {
+                tags.update(oldTag, tagToUpdate);
+                personToEdit.setTags(tags);
+                internalList.set(i, personToEdit);
+            }
+        }
+    }
 
     @Override
     public Iterator<Person> iterator() {
@@ -134,8 +217,8 @@ public class UniquePersonList implements Iterable<Person> {
     public boolean equals(Object other) {
         return other == this // short circuit if same object
                 || (other instanceof UniquePersonList // instanceof handles nulls
-                && this.internalList.equals(
-                        ((UniquePersonList) other).internalList));
+                        && this.internalList.equals(
+                                ((UniquePersonList) other).internalList));
     }
 
     @Override
