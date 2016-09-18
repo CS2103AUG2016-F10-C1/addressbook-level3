@@ -4,6 +4,7 @@ import seedu.addressbook.common.Messages;
 import seedu.addressbook.data.exception.IllegalValueException;
 import seedu.addressbook.data.person.ReadOnlyPerson;
 import seedu.addressbook.data.person.UniquePersonList.PersonNotFoundException;
+import seedu.addressbook.data.tag.UniqueTagList.TagNotFoundException;
 
 
 /**
@@ -42,6 +43,8 @@ public class EditCommand extends Command {
             return new CommandResult(Messages.MESSAGE_PERSON_NOT_IN_ADDRESSBOOK + Messages.MESSAGE_EXECUTE_LIST);
         } catch (IllegalValueException ive) {
             return new CommandResult(ive.getMessage());
+        } catch (TagNotFoundException tnfe) {
+            return new CommandResult(tnfe.getMessage());
         }
     }
 
