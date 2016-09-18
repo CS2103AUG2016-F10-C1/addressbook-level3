@@ -4,6 +4,7 @@ import seedu.addressbook.commands.Command;
 import seedu.addressbook.commands.CommandResult;
 import seedu.addressbook.data.AddressBook;
 import seedu.addressbook.data.person.ReadOnlyPerson;
+import seedu.addressbook.data.tag.ReadOnlyTag;
 import seedu.addressbook.parser.Parser;
 import seedu.addressbook.storage.StorageFile;
 
@@ -20,8 +21,11 @@ public class Logic {
     private StorageFile storage;
     private AddressBook addressBook;
 
-    /** The list of person shown to the user most recently.  */
-    private List<? extends ReadOnlyPerson> lastShownList = Collections.emptyList();
+    /** The list of person shown to the user most recently. */
+    private List<? extends ReadOnlyPerson> lastShownPersonList = Collections.emptyList();
+    
+    /** The list of tag shown to the user most recently. */
+    private List<? extends ReadOnlyTag> lastShownTagList = Collections.emptyList();
 
     public Logic() throws Exception{
         setStorage(initializeStorage());
@@ -54,14 +58,25 @@ public class Logic {
     }
 
     /**
-     * Unmodifiable view of the current last shown list.
+     * Unmodifiable view of the current last shown person list.
      */
-    public List<ReadOnlyPerson> getLastShownList() {
-        return Collections.unmodifiableList(lastShownList);
+    public List<ReadOnlyPerson> getLastShownPersonList() {
+        return Collections.unmodifiableList(lastShownPersonList);
+    }
+    
+    /**
+     * Unmodifiable view of the current last shown tag list.
+     */
+    public List<ReadOnlyTag> getLastShownTagList() {
+        return Collections.unmodifiableList(lastShownTagList);
     }
 
-    protected void setLastShownList(List<? extends ReadOnlyPerson> newList) {
-        lastShownList = newList;
+    protected void setLastShownPersonList(List<? extends ReadOnlyPerson> newList) {
+        lastShownPersonList = newList;
+    }
+    
+    protected void setLastShownTagList(List<? extends ReadOnlyTag> newList) {
+        lastShownTagList = newList;
     }
 
     /**
@@ -83,17 +98,21 @@ public class Logic {
      * @throws Exception if there was any problem during command execution.
      */
     private CommandResult execute(Command command) throws Exception {
-        command.setData(addressBook, lastShownList);
+        command.setData(addressBook, lastShownPersonList, lastShownTagList);
         CommandResult result = command.execute();
         storage.save(addressBook);
         return result;
     }
 
-    /** Updates the {@link #lastShownList} if the result contains a list of Persons. */
+    /** Updates the {@link #lastShownList} if the result contains a list of Persons or a list of Tags. */
     private void recordResult(CommandResult result) {
         final Optional<List<? extends ReadOnlyPerson>> personList = result.getRelevantPersons();
+        final Optional<List<? extends ReadOnlyTag>> tagList = result.getRelevantTags();
         if (personList.isPresent()) {
-            lastShownList = personList.get();
+            lastShownPersonList = personList.get();
+        }
+        if (tagList.isPresent()) {
+            lastShownTagList = tagList.get();
         }
     }
 }

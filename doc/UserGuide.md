@@ -37,8 +37,12 @@ Examples:
 Shows a list of all persons in the address book.<br>
 Format: `list`
 
-## Finding all persons containing any keyword their contact details: `find`
-Finds persons whose names contain any of the given keywords.<br>
+## Listing all tags: `listtag`
+Shows a list of all tags in the address book.<br>
+Format: `listtag`
+
+## Finding all persons containing any keyword in their contact details: `find`
+Finds persons whose contact details contain any of the given keywords.<br>
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
 > The search is case insensitive, the order of the keywords does not matter, all non-private contact details is searched, 
